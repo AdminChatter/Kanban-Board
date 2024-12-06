@@ -1,36 +1,27 @@
 import { UserLogin } from "../interfaces/UserLogin";
 
 const login = async (userInfo: UserLogin) => {
-  import { UserLogin } from "../interfaces/UserLogin";
-
-const login = async (userInfo: UserLogin) => {
   try {
-    const response = await fetch('/auth/login', {
+    const response = await fetch('/api/login', {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
       },
-      body: JSON.stringify(userInfo)
+      body: JSON.stringify(userInfo), // Send the user info as JSON
     });
 
     if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(`Error: ${errorData.message}`);
+      throw new Error('Login failed');
     }
 
     const data = await response.json();
-
-    return data;
-  } catch (err) {
-    console.log('Error from user login: ', err); 
-    return Promise.reject('Could not fetch user info'); 
+    const { token } = data; // Assuming the server returns a JWT token
+    localStorage.setItem('auth_token', token); // Store the token in localStorage
+    window.location.href = '/'; // Redirect to the home page or any page after login
+  } catch (error) {
+    console.error('Error during login', error);
+    // Handle error, maybe show a message to the user
   }
-}
-
-
-export { login };
-}
-
-
+};
 
 export { login };
